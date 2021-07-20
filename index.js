@@ -1,26 +1,28 @@
+const mongo = require('./mongo')
 const express = require('express')
+const logger = require('./logger')
 const app = express()
-const axios = require('axios')
+const cors = require('cors')
 const PORT = 3001
+const dogApi = require('./controllers/dogs')
+const usersRouter = require('./controllers/User/create')
+const loginRouter = require('./controllers/User/login')
+
+app.use(cors())
+app.use(express.json())
 app.use(express.static('public'))
 
 app.get('/', (request, response) => {
   console.log(request.ip)
   console.log(request.ips)
   console.log(request.originalUrl)
+  user()
   response.location('./public')
 })
 
-app.get('/dogs',(request,res)=>{
-  axios.get('https://dog.ceo/api/breeds/list/all')
-  .then(response => res.status(201).send(response.data))
-})
+app.use('/dogs', dogApi)
 
-app.get('/dogs/:breed',(request,res)=>{
-  const { breed } = request.params
-  axios.get(`https://dog.ceo/api/breed/${breed}/images`)
-  .then(response => res.status(201).send(response.data))
-  .catch(err => res.status(404).json({"message":err.message}) )
-})
+app.use('/api/users', usersRouter)
+app.use('/api/login', loginRouter)
 
 app.listen(PORT, () => console.log(`Server listening on port: ${PORT}`))
