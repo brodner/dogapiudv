@@ -16,7 +16,6 @@ app.get('/', (request, response) => {
   console.log(request.ip)
   console.log(request.ips)
   console.log(request.originalUrl)
-  user()
   response.location('./public')
 })
 
